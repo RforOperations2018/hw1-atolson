@@ -14,40 +14,40 @@ cancer <- esoph
 colnames(cancer) <- c("Age_Group", "Alcohol_Use", "Tobacco_Use", "Num_Cases", "Num_Controls")
 pdf(NULL)
 
-#Define UI for app that shows table and plots a ____
+#Define UI for app that shows table and plots a bar
 ui <- fluidPage(
   navbarPage("Esophageal Cancer Navigation Bar", 
              theme = shinytheme("journal"),
-             tabPanel("Plot",
+             tabPanel("Alcohol",
                       sidebarLayout(
                         sidebarPanel(
-                          selectInput("Age_Select",
-                                      "Age:",
-                                      choices = levels(cancer$Age_Group),
-                                      multiple = TRUE,
-                                      selectize = TRUE,
-                                      selected = c("25-34", "35-44", "45-54", "55-64", "65-74", "75+"))
-                        ),
+                          checkboxGroupInput("Age_Select",
+                                             "Age:",
+                                             choices = levels(cancer$Age_Group),
+                                             selected = c("25-34", "35-44"))
+                          ),
                         # Output plot
                         mainPanel(
-                          plotlyOutput("plot")
+                          plotlyOutput("Alcohol")
                         )
-                      )
-             ),
+                      )),
              # Data Table
-             tabPanel("Table",
-                      fluidPage(DT::dataTableOutput("table"))
+             tabPanel("Tobacco",
+                      fluidPage(DT::dataTableOutput("Tobacco"))
              )
   )
 )
 
 # Define server logic
 server <- function(input, output) {
-  output$plot <- renderPlotly({
+  output$Alcohol <- renderPlotly({
     cancerdata <- subset(cancer, Age_Group %in% input$Age_Select)
-    ggplot(data = cancerdata, aes(x = Age_Group, y = Alcohol_Use, fill = Alcohol_Use)) + geom_bar(, stat = "identity")
+    ggplot(data = cancerdata, aes(x = Alcohol_Use, y = Num_Cases, fill = Age_Group)) + geom_bar(stat = "identity") +
+      xlab("Alcohol Use") + ylab("Number of Cases")
+    #ggplot(data = cancerdata, aes(x = Tobacco_Use, y = Num_Cases, fill = Age_Group)) + geom_bar(stat = "identity") +
+    #  xlab("Tobacco Use") + ylab("Number of Cases")
   })
-  output$table <- DT::renderDataTable({
+  output$Tobacco <- DT::renderDataTable({
     subset(cancer, Age_Group %in% input$Age_Select, select = c(Age_Group, Alcohol_Use, Tobacco_Use, Num_Cases, Num_Controls))
   })
 }
