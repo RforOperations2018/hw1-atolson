@@ -36,7 +36,7 @@ ui <- fluidPage(
                       sidebarLayout(
                         sidebarPanel(
                           radioButtons("Cause_Select",
-                                             "Age:",
+                                             "Age:", # Mislabeled!
                                              choices = c("Tobacco Use", "Alcohol Use"),
                                              selected = c("Tobacco Use"))
                         ),
